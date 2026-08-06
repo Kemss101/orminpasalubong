@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" role="img" aria-labelledby="title desc">
+  <title id="title">Mindoro Ube Halaya</title>
+  <desc id="desc">Sample product image of ube halaya</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#E2F5D0"/>
+      <stop offset="100%" stop-color="#FFE169"/>
+    </linearGradient>
+  </defs>
+  <rect width="800" height="500" fill="url(#bg)"/>
+  <circle cx="130" cy="110" r="85" fill="#ffffff" fill-opacity="0.22"/>
+  <circle cx="690" cy="370" r="100" fill="#ffffff" fill-opacity="0.14"/>
+  <text x="400" y="230" text-anchor="middle" font-family="Arial, sans-serif" font-size="54" font-weight="700" fill="#1F2937">UBE HALAYA</text>
+  <text x="400" y="280" text-anchor="middle" font-family="Arial, sans-serif" font-size="24" fill="#1F2937">Classic Filipino sweet spread</text>
+</svg>

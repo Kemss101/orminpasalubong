@@ -1,0 +1,58 @@
+@import 'tailwindcss';
+@plugin "flowbite/plugin";
+
+@source '../../node_modules/flowbite/**/*.js';
+@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
+@source '../../storage/framework/views/*.php';
+@source '../**/*.blade.php';
+@source '../**/*.js';
+
+@theme {
+    --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
+        'Segoe UI Symbol', 'Noto Color Emoji';
+    --color-primary: #b8f26a;
+    --color-secondary: #ffe56b;
+    --color-primary-strong: #63b524;
+    --color-secondary-strong: #e4c11f;
+}
+
+@layer utilities {
+    /* Global remap: legacy red accents now yellow */
+    .bg-red-50 { background-color: #fffde8 !important; }
+    .bg-red-100 { background-color: #fff7c2 !important; }
+    .bg-red-200 { background-color: #f0df67 !important; }
+    .bg-red-300 { background-color: #e7d04d !important; }
+    .bg-red-500 { background-color: var(--color-secondary-strong) !important; }
+    .bg-red-600 { background-color: #caa90d !important; }
+
+    .border-red-200 { border-color: #f0df67 !important; }
+    .border-red-300 { border-color: #e7d04d !important; }
+
+    .text-red-500 { color: #b78d06 !important; }
+    .text-red-600 { color: #9c7a05 !important; }
+    .text-red-700 { color: #7d6203 !important; }
+
+    .hover\:bg-red-100:hover { background-color: #fff7c2 !important; }
+    .hover\:bg-red-600:hover { background-color: #caa90d !important; }
+
+    /* Legacy blue/emerald accents now green */
+    .bg-blue-500 { background-color: var(--color-primary-strong) !important; }
+    .bg-blue-600 { background-color: #478f16 !important; }
+    .hover\:bg-blue-600:hover { background-color: #478f16 !important; }
+
+    .text-blue-500 { color: #5da91f !important; }
+    .text-blue-600 { color: #4b9217 !important; }
+    .text-blue-700 { color: #3a7a11 !important; }
+
+    .bg-emerald-100 { background-color: #dff8b8 !important; }
+    .bg-emerald-500 { background-color: var(--color-primary-strong) !important; }
+    .bg-emerald-600 { background-color: #478f16 !important; }
+    .hover\:bg-emerald-600:hover { background-color: #478f16 !important; }
+
+    .text-emerald-600 { color: #4b9217 !important; }
+    .text-emerald-700 { color: #3a7a11 !important; }
+
+    /* Amber remains yellow but tuned to palette */
+    .bg-amber-100 { background-color: #fff3ad !important; }
+    .text-amber-700 { color: #8e6f04 !important; }
+}
