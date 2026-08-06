@@ -1,11 +1,11 @@
 <?php
 
-// 1. Force raw PHP errors to surface if execution halts
+// Force error reporting to catch issues early
 ini_set('display_errors', '1');
 ini_set('display_startup_errors', '1');
 error_reporting(E_ALL);
 
-// 2. Build required writable folders in Vercel's /tmp execution space
+// Create required writable directories in Vercel's /tmp execution space
 $dirs = [
     '/tmp/storage/app/public',
     '/tmp/storage/framework/cache/data',
@@ -21,21 +21,14 @@ foreach ($dirs as $dir) {
     }
 }
 
-// 3. Touch SQLite file for temporary fallback database handling
-if (!file_exists('/tmp/database.sqlite')) {
-    touch('/tmp/database.sqlite');
-}
-
-// 4. Load Composer Autoloader
+// Load Composer Autoloader and Bootstrap Application
 require __DIR__ . '/../vendor/autoload.php';
-
-// 5. Bootstrap Laravel Application
 $app = require_once __DIR__ . '/../bootstrap/app.php';
 
-// 6. Explicitly override Laravel storage and cache paths to /tmp
+// Dynamically bind storage path to /tmp
 $app->useStoragePath('/tmp/storage');
 
-// 7. Process Incoming Request
+// Handle the HTTP Request
 $kernel = $app->make(Illuminate\Contracts\Http\Kernel::class);
 
 $response = $kernel->handle(
