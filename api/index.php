@@ -1,11 +1,11 @@
 <?php
 
-// Force display of fatal PHP errors before framework boot
+// 1. Force raw PHP errors to surface if execution halts
 ini_set('display_errors', '1');
 ini_set('display_startup_errors', '1');
 error_reporting(E_ALL);
 
-// Create required writable directories in Vercel's /tmp environment
+// 2. Build required writable folders in Vercel's /tmp execution space
 $dirs = [
     '/tmp/storage/app/public',
     '/tmp/storage/framework/cache/data',
@@ -21,9 +21,27 @@ foreach ($dirs as $dir) {
     }
 }
 
-// Override storage & bootstrap paths to /tmp
-putenv('APP_STORAGE_PATH=/tmp/storage');
-putenv('VIEW_COMPILED_PATH=/tmp/storage/framework/views');
+// 3. Touch SQLite file for temporary fallback database handling
+if (!file_exists('/tmp/database.sqlite')) {
+    touch('/tmp/database.sqlite');
+}
 
-// Load bootstrap file
-require __DIR__ . '/../public/index.php';
+// 4. Load Composer Autoloader
+require __DIR__ . '/../vendor/autoload.php';
+
+// 5. Bootstrap Laravel Application
+$app = require_once __DIR__ . '/../bootstrap/app.php';
+
+// 6. Explicitly override Laravel storage and cache paths to /tmp
+$app->useStoragePath('/tmp/storage');
+
+// 7. Process Incoming Request
+$kernel = $app->make(Illuminate\Contracts\Http\Kernel::class);
+
+$response = $kernel->handle(
+    $request = Illuminate\Http\Request::capture()
+);
+
+$response->send();
+
+$kernel->terminate($request, $response);
