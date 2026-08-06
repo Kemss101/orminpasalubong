@@ -1,7 +1,7 @@
 <?php
 
-// Create required writable directories in Vercel's /tmp execution path
-$dirs = [
+// Create required writable directories in Vercel /tmp execution environment
+$storageDirs = [
     '/tmp/storage/app/public',
     '/tmp/storage/framework/cache/data',
     '/tmp/storage/framework/sessions',
@@ -10,11 +10,11 @@ $dirs = [
     '/tmp/bootstrap/cache',
 ];
 
-foreach ($dirs as $dir) {
+foreach ($storageDirs as $dir) {
     if (!is_dir($dir)) {
         mkdir($dir, 0755, true);
     }
 }
 
-// Forward to public index
+// Pass request to public/index.php
 require __DIR__ . '/../public/index.php';
