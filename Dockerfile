@@ -44,4 +44,6 @@ RUN mkdir -p /var/www/html/storage /var/www/html/bootstrap/cache \
     && chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
 
 EXPOSE 8080
-CMD ["apache2-foreground"]
+
+# Auto-run database migrations on container startup, then start Apache
+CMD sh -c "php artisan migrate --force && apache2-foreground"
