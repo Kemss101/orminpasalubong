@@ -3,7 +3,7 @@ FROM composer:2 as vendor
 
 WORKDIR /app
 COPY composer.json composer.lock ./
-RUN composer install --no-dev --optimize-autoloader --no-interaction --prefer-dist
+RUN composer install --no-dev --optimize-autoloader --no-interaction --prefer-dist --ignore-platform-reqs
 
 COPY . ./
 RUN composer dump-autoload --optimize --no-interaction
@@ -31,6 +31,9 @@ RUN sed -ri 's!/var/www/html!/var/www/html/public!g' /etc/apache2/sites-availabl
 
 WORKDIR /var/www/html
 COPY --from=vendor /app /var/www/html
+
+# Set required permissions for Laravel storage and cache
+RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
 
 EXPOSE 8080
 CMD ["apache2-foreground"]
