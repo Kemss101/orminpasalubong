@@ -46,5 +46,5 @@ RUN mkdir -p /var/www/html/storage /var/www/html/bootstrap/cache \
 
 EXPOSE 8080
 
-# Auto-run database migrations on container startup, then start Apache
-CMD sh -c "php artisan migrate --force && apache2-foreground"
+# Clear stale configuration caches, run migrations, and launch Apache
+CMD sh -c "php artisan config:clear && php artisan migrate --force && apache2-foreground"
