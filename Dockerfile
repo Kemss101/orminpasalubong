@@ -34,10 +34,18 @@ RUN apt-get update && apt-get install -y \
 ENV APACHE_DOCUMENT_ROOT /var/www/html/public
 ENV PORT 8080
 
-# Update Apache DocumentRoot and configure Directory permissions
-RUN sed -ri 's!/var/www/html!/var/www/html/public!g' /etc/apache2/sites-available/000-default.conf \
-    && sed -ri 's/:80/:8080/g' /etc/apache2/ports.conf /etc/apache2/sites-available/*.conf \
-    && echo "<Directory /var/www/html/public>\n    Options Indexes FollowSymLinks\n    AllowOverride All\n    Require all granted\n</Directory>" >> /etc/apache2/apache2.conf
+# Configure Apache virtual host explicitly for port 8080 and /public
+RUN echo '<VirtualHost *:8080>\n\
+    DocumentRoot /var/www/html/public\n\
+    <Directory /var/www/html/public>\n\
+        Options -Indexes +FollowSymLinks\n\
+        AllowOverride All\n\
+        Require all granted\n\
+    </Directory>\n\
+    ErrorLog ${APACHE_LOG_DIR}/error.log\n\
+    CustomLog ${APACHE_LOG_DIR}/access.log combined\n\
+</VirtualHost>' > /etc/apache2/sites-available/000-default.conf \
+    && echo "Listen 8080" > /etc/apache2/ports.conf
 
 WORKDIR /var/www/html
 COPY --from=vendor /app /var/www/html
