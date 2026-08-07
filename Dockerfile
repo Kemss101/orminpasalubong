@@ -2,10 +2,17 @@
 FROM composer:2 as vendor
 
 WORKDIR /app
-COPY composer.json composer.lock ./
-RUN composer install --no-dev --optimize-autoloader --no-interaction --prefer-dist --ignore-platform-reqs
 
+# Copy composer files
+COPY composer.json composer.lock ./
+
+# Install dependencies without running artisan scripts prematurely
+RUN composer install --no-dev --optimize-autoloader --no-interaction --prefer-dist --ignore-platform-reqs --no-scripts
+
+# Copy full application code
 COPY . ./
+
+# Dump autoload rules now that application files exist
 RUN composer dump-autoload --optimize --no-interaction
 
 # Runtime stage: serve Laravel through Apache
