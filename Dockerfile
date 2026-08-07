@@ -1,21 +1,28 @@
-# Build stage: install PHP dependencies with Composer
+# Stage 1: Install PHP dependencies with Composer
 FROM composer:2 as vendor
 
 WORKDIR /app
 
-# Copy composer files
 COPY composer.json composer.lock ./
-
-# Install dependencies without running artisan scripts prematurely
 RUN composer install --no-dev --optimize-autoloader --no-interaction --prefer-dist --ignore-platform-reqs --no-scripts
 
-# Copy full application code
 COPY . ./
-
-# Dump autoload rules now that application files exist
 RUN composer dump-autoload --optimize --no-interaction
 
-# Runtime stage: serve Laravel through Apache
+
+# Stage 2: Build frontend assets with Node & Vite
+FROM node:20-alpine as assets
+
+WORKDIR /app
+
+COPY package*.json ./
+RUN npm ci
+
+COPY --from=vendor /app ./
+RUN npm run build
+
+
+# Stage 3: Runtime stage - serve Laravel through Apache
 FROM php:8.2-apache
 
 RUN apt-get update && apt-get install -y \
@@ -48,7 +55,9 @@ RUN echo '<VirtualHost *:8080>\n\
     && echo "Listen 8080" > /etc/apache2/ports.conf
 
 WORKDIR /var/www/html
-COPY --from=vendor /app /var/www/html
+
+# Copy application code with compiled vendor packages and Vite manifest assets
+COPY --from=assets /app /var/www/html
 
 # Ensure storage and cache directories exist and set required permissions
 RUN mkdir -p /var/www/html/storage /var/www/html/bootstrap/cache \
