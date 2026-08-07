@@ -1,0 +1,17 @@
+node_modules
+vendor
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.env
+.env.*
+.phpunit.result.cache
+/storage
+/public/storage
+/.idea
+/.vscode
+/.git
+/.github
+/.firebase
+firebase-hosting
+.DS_Store

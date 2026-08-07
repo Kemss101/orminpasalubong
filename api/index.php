@@ -1,40 +1,38 @@
 <?php
 
-// Force error reporting to catch issues early
-ini_set('display_errors', '1');
-ini_set('display_startup_errors', '1');
-error_reporting(E_ALL);
+use Illuminate\Http\Request;
 
-// Create required writable directories in Vercel's /tmp execution space
-$dirs = [
-    '/tmp/storage/app/public',
-    '/tmp/storage/framework/cache/data',
-    '/tmp/storage/framework/sessions',
-    '/tmp/storage/framework/views',
-    '/tmp/storage/logs',
-    '/tmp/bootstrap/cache',
-];
+define('LARAVEL_START', microtime(true));
 
-foreach ($dirs as $dir) {
-    if (!is_dir($dir)) {
-        mkdir($dir, 0755, true);
-    }
+// Load application
+$app = require_once __DIR__.'/../bootstrap/app.php';
+
+// Configure read-only filesystem workaround for Vercel
+$storagePath = '/tmp/storage';
+if (!file_exists($storagePath)) {
+    mkdir($storagePath . '/framework/views', 0755, true);
+    mkdir($storagePath . '/framework/sessions', 0755, true);
+    mkdir($storagePath . '/framework/cache', 0755, true);
+    mkdir($storagePath . '/logs', 0755, true);
 }
+$app->useStoragePath($storagePath);
 
-// Load Composer Autoloader and Bootstrap Application
-require __DIR__ . '/../vendor/autoload.php';
-$app = require_once __DIR__ . '/../bootstrap/app.php';
-
-// Dynamically bind storage path to /tmp
-$app->useStoragePath('/tmp/storage');
-
-// Handle the HTTP Request
 $kernel = $app->make(Illuminate\Contracts\Http\Kernel::class);
 
-$response = $kernel->handle(
-    $request = Illuminate\Http\Request::capture()
-);
+try {
+    $response = $kernel->handle(
+        $request = Request::capture()
+    );
+    $response->send();
+    $kernel->terminate($request, $response);
+} catch (\Throwable $e) {
+    // 1. Output short concise error to Vercel STDERR (prevents log truncation)
+    file_put_contents('php://stderr', "\n\n=== LARAVEL EXCEPTION ===\n" . $e->getMessage() . "\nin " . $e->getFile() . ":" . $e->getLine() . "\n=========================\n\n");
 
-$response->send();
-
-$kernel->terminate($request, $response);
+    // 2. Output directly to response body
+    http_response_code(500);
+    echo "<h1>Server Error</h1>";
+    echo "<p><strong>Error:</strong> " . htmlspecialchars($e->getMessage()) . "</p>";
+    echo "<p><strong>File:</strong> " . htmlspecialchars($e->getFile()) . ":" . $e->getLine() . "</p>";
+    exit;
+}
