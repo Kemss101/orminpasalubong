@@ -27,7 +27,8 @@ RUN apt-get update && apt-get install -y \
     libxml2-dev \
     zlib1g-dev \
     libicu-dev \
-    && docker-php-ext-install intl pdo_mysql mbstring zip exif pcntl \
+    libpq-dev \
+    && docker-php-ext-install intl pdo_mysql pdo_pgsql mbstring zip exif pcntl \
     && a2enmod rewrite
 
 ENV APACHE_DOCUMENT_ROOT /var/www/html/public
