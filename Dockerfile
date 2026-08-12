@@ -65,6 +65,9 @@ WORKDIR /var/www/html
 # Copy application code with compiled vendor packages and built assets
 COPY --from=assets /app /var/www/html
 
+# Explicitly ensure compiled Vite build files are present in public/build
+COPY --from=assets /app/public/build /var/www/html/public/build
+
 # Copy entrypoint script and make it executable
 COPY docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
 RUN chmod +x /usr/local/bin/docker-entrypoint.sh
@@ -75,7 +78,7 @@ RUN mkdir -p /var/www/html/storage/framework/views \
              /var/www/html/storage/framework/sessions \
              /var/www/html/storage/logs \
              /var/www/html/bootstrap/cache \
-    && chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache \
+    && chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache /var/www/html/public \
     && chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
 
 EXPOSE 8080

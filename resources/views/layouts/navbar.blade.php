@@ -13,23 +13,23 @@
             <a href="{{ route('home') }}#services" class="rounded-full px-4 py-2 hover:bg-primary/40">Services</a>
             <a href="{{ route('home') }}#about" class="rounded-full px-4 py-2 hover:bg-primary/40">About</a>
 
-            @if(Auth::check())
-                @if(Auth::user()->user_type === 'admin')
-                    <a href="{{ route('admin.dashboard') }}" class="rounded-full px-4 py-2 hover:bg-primary/40">Dashboard</a>
-                @elseif(Auth::user()->user_type === 'seller')
-                    <a href="{{ route('seller.dashboard') }}" class="rounded-full px-4 py-2 hover:bg-primary/40">Dashboard</a>
-                @else
-                    <a href="{{ route('customer.dashboard') }}" class="rounded-full px-4 py-2 hover:bg-primary/40">Dashboard</a>
-                @endif
+            <!-- GUEST VIEW: Shown when logged out (Controlled by Firebase class .auth-guest) -->
+            <div class="auth-guest flex items-center gap-2">
+                <button type="button" onclick="openLoginModal(false)" class="rounded-full px-4 py-2 hover:bg-primary/40">
+                    Login
+                </button>
+                <button type="button" onclick="openLoginModal(true)" class="rounded-full bg-secondary px-4 py-2 text-gray-900 hover:bg-secondaryStrong">
+                    Register
+                </button>
+            </div>
 
-                <form method="POST" action="{{ route('logout') }}" class="inline">
-                    @csrf
-                    <button type="submit" class="rounded-full bg-red-500 px-4 py-2 text-white hover:bg-red-600">Logout</button>
-                </form>
-            @else
-                <a href="{{ route('login') }}" class="rounded-full px-4 py-2 hover:bg-primary/40">Login</a>
-                <a href="{{ route('register') }}" class="rounded-full bg-secondary px-4 py-2 text-gray-900 hover:bg-secondaryStrong">Register</a>
-            @endif
+            <!-- USER VIEW: Shown when logged in (Controlled by Firebase class .auth-user) -->
+            <div class="auth-user flex items-center gap-2" style="display: none;">
+                <a href="#" class="rounded-full px-4 py-2 hover:bg-primary/40">Dashboard</a>
+                <button type="button" onclick="import('https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js').then(({getAuth, signOut}) => signOut(getAuth()))" class="rounded-full bg-red-500 px-4 py-2 text-white hover:bg-red-600">
+                    Logout
+                </button>
+            </div>
         </div>
     </div>
 </nav>
